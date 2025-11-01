@@ -6,6 +6,7 @@ const router = Router();
 
 const departmentController = new DepartmentController();
 router.get("/", departmentController.getAll.bind(departmentController));
+router.get("/active", departmentController.getAll.bind(departmentController));
 router.get("/:id", departmentController.getById.bind(departmentController));
 router.post("/", departmentController.create.bind(departmentController));
 router.put("/:id", departmentController.update.bind(departmentController));

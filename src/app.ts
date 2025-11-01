@@ -2,12 +2,19 @@ import express from "express";
 import cors from "cors";
 import departmentRoutes from "./routes/DepartmentRoutes.ts";
 import typeOfAssetRoutes from "./routes/TypeOfAsset.ts";
+import accountTypeRoutes from "./routes/AccountRoutes.ts";
+import currencyRoutes from "./routes/CurrencyRoutes.ts";
+import chartOfAccountRoutes from "./routes/ChartOfAccountRoutes.ts";
+import accountRoutes from "./routes/AccountRoutes.ts";
 const app = express();
 const API_PREFIX = "/api/v1";
-
 app.use(cors());
 app.use(express.json());
 app.use(`${API_PREFIX}/departments`, departmentRoutes);
 app.use(`${API_PREFIX}/type-of-assets`, typeOfAssetRoutes);
+app.use(`${API_PREFIX}/accounts`, accountRoutes);
+app.use(`${API_PREFIX}/currencies`, currencyRoutes);
+app.use(`${API_PREFIX}/account-types`, accountTypeRoutes);
+app.use(`${API_PREFIX}/chart-of-accounts`, chartOfAccountRoutes);
 
 export default app;

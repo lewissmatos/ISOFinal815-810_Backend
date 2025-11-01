@@ -3,10 +3,13 @@ import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 import { Department } from "../entities/Department.ts";
 import { TypeOfAsset } from "../entities/TypeOfAsset.ts";
+import { AccountType } from "../entities/AccountType.ts";
+import { Account } from "../entities/Account.ts";
+import { ChartOfAccount } from "../entities/ChartOfAccount.ts";
+import { Currency } from "../entities/Currency.ts";
 
 dotenv.config();
 
-// Helper to parse integer ports with a sensible default (MSSQL default 1433)
 const parsePort = (value?: string, fallback = 1433) => {
 	const n = value ? Number(value) : NaN;
 	return Number.isInteger(n) && n > 0 ? n : fallback;
@@ -26,7 +29,11 @@ export const AppDataSource = new DataSource({
 	database: process.env.DB_NAME || "",
 	synchronize: true,
 	logging: false,
-	entities: [Department, TypeOfAsset],
+	entities: [
+		Department,
+		TypeOfAsset,
+		...[AccountType, Account, ChartOfAccount, Currency] /* Seed Entities */,
+	],
 	options: {
 		encrypt: parseBool(process.env.DB_ENCRYPT, false),
 		connectTimeout: process.env.DB_CONNECT_TIMEOUT

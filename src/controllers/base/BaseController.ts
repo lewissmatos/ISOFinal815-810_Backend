@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import type { Repository } from "typeorm";
-import type { Base } from "../entities/Base.ts";
-import { ApiResponse } from "../utils/ApiResponse.util.ts";
+import type { Base } from "../../entities/Base.ts";
+import { ApiResponse } from "../../utils/ApiResponse.util.ts";
 
 export abstract class BaseController<T extends object & Base> {
 	protected repository: Repository<T>;
@@ -20,17 +20,12 @@ export abstract class BaseController<T extends object & Base> {
 		}
 	}
 
-	async create(req: Request, res: Response) {
-		const payload = req.body;
+	async getActive(req: Request, res: Response) {
 		try {
-			const newDepartment = this.repository.create({
-				...payload,
-			});
-
-			const savedItem = await this.repository.save(newDepartment);
-			return ApiResponse.created(res, savedItem);
+			const active = await this.repository.findBy({ isActive: true } as any);
+			return ApiResponse.success(res, active);
 		} catch (error) {
-			console.error("Error creating:", error);
+			console.error("Error fetching item:", error);
 			return ApiResponse.error(res, "Error interno del servidor");
 		}
 	}
@@ -48,6 +43,20 @@ export abstract class BaseController<T extends object & Base> {
 		}
 	}
 
+	async create(req: Request, res: Response) {
+		const payload = req.body;
+		try {
+			const newDepartment = this.repository.create({
+				...payload,
+			});
+
+			const savedItem = await this.repository.save(newDepartment);
+			return ApiResponse.created(res, savedItem);
+		} catch (error) {
+			console.error("Error creating:", error);
+			return ApiResponse.error(res, "Error interno del servidor");
+		}
+	}
 	async update(req: Request, res: Response) {
 		const { id } = req.params;
 		const payload = req.body;
