@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AccountTypeController } from "../controllers/AccountTypeController.ts";
+import { AccountTypeController } from "../../controllers/base/AccountTypeController";
 
 const router = Router();
 

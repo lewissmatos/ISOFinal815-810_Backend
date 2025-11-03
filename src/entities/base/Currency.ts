@@ -1,14 +1,18 @@
 import { Entity, Column } from "typeorm";
 import { Base } from "./Base.ts";
 
-// Catalogo de auxiliares
-@Entity()
-export class ChartOfAccount {
+//Moneda
+@Entity({ name: "currencies" })
+export class Currency {
 	@Column({ primary: true, unique: true })
 	id: number;
+
+	@Column({ unique: true, length: 5 })
+	ISOCode: string;
+
 	@Column({ unique: true })
 	description: string;
 
-	@Column({ name: "status", default: true })
-	isActive: boolean;
+	@Column()
+	exchangeRate: number;
 }

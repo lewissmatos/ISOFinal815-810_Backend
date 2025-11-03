@@ -3,10 +3,12 @@ import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 import { Department } from "../entities/Department.ts";
 import { TypeOfAsset } from "../entities/TypeOfAsset.ts";
-import { AccountType } from "../entities/AccountType.ts";
-import { Account } from "../entities/Account.ts";
-import { ChartOfAccount } from "../entities/ChartOfAccount.ts";
-import { Currency } from "../entities/Currency.ts";
+import { ChartOfAccount } from "../entities/base/ChartOfAccount.ts";
+import { Currency } from "../entities/base/Currency.ts";
+import { Employee } from "../entities/Employee.ts";
+import { AccountType } from "../entities/base/AccountType.ts";
+import { Account } from "../entities/base/Account.ts";
+import { FixedAsset } from "../entities/FixedAsset.ts";
 
 dotenv.config();
 
@@ -32,6 +34,8 @@ export const AppDataSource = new DataSource({
 	entities: [
 		Department,
 		TypeOfAsset,
+		Employee,
+		FixedAsset,
 		...[AccountType, Account, ChartOfAccount, Currency] /* Seed Entities */,
 	],
 	options: {

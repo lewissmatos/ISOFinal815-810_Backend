@@ -9,7 +9,7 @@ router.get("/active", typeOfAssetController.getAll.bind(typeOfAssetController));
 router.get("/:id", typeOfAssetController.getById.bind(typeOfAssetController));
 router.post("/", typeOfAssetController.create.bind(typeOfAssetController));
 router.put("/:id", typeOfAssetController.update.bind(typeOfAssetController));
-router.put(
+router.patch(
 	"/:id/toggle",
 	typeOfAssetController.toggleStatus.bind(typeOfAssetController)
 );

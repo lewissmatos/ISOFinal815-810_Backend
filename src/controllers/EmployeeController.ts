@@ -1,19 +1,17 @@
 import { BaseController } from "./base/BaseController.ts";
 import { AppDataSource } from "../config/data-source.ts";
-import { TypeOfAsset } from "../entities/TypeOfAsset.ts";
-import { ApiResponse } from "../utils/ApiResponse.util.ts";
+import { Employee } from "../entities/Employee.ts";
 import { Request, Response } from "express";
+import { ApiResponse } from "../utils/ApiResponse.util.ts";
 
-export class TypeOfAssetController extends BaseController<TypeOfAsset> {
+export class EmployeeController extends BaseController<Employee> {
 	constructor() {
-		super(AppDataSource.getRepository(TypeOfAsset));
+		super(AppDataSource.getRepository(Employee));
 	}
 
 	async getAll(req: Request, res: Response): Promise<Response> {
 		try {
-			const data = await this.repository.find({
-				relations: ["buyingAccount", "depreciationAccount"],
-			});
+			const data = await this.repository.find({ relations: ["department"] });
 			return ApiResponse.success(res, data);
 		} catch (error) {
 			console.error("Error fetching data:", error);

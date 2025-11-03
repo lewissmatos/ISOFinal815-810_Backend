@@ -10,7 +10,7 @@ router.get("/active", departmentController.getAll.bind(departmentController));
 router.get("/:id", departmentController.getById.bind(departmentController));
 router.post("/", departmentController.create.bind(departmentController));
 router.put("/:id", departmentController.update.bind(departmentController));
-router.put(
+router.patch(
 	"/:id/toggle",
 	departmentController.toggleStatus.bind(departmentController)
 );

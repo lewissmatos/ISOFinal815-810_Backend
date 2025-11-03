@@ -1,8 +1,7 @@
 import { Entity, Column } from "typeorm";
-import { Base } from "./Base.ts";
 
 // Cuentas Contables
-@Entity()
+@Entity({ name: "accounts" })
 export class Account {
 	@Column({ primary: true, unique: true })
 	id: number;

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import type { Repository } from "typeorm";
-import type { Base } from "../../entities/Base.ts";
+import type { Base } from "../../entities/base/Base.ts";
 import { ApiResponse } from "../../utils/ApiResponse.util.ts";
 
 export abstract class BaseController<T extends object & Base> {
@@ -46,11 +46,11 @@ export abstract class BaseController<T extends object & Base> {
 	async create(req: Request, res: Response) {
 		const payload = req.body;
 		try {
-			const newDepartment = this.repository.create({
+			const newItem = this.repository.create({
 				...payload,
 			});
 
-			const savedItem = await this.repository.save(newDepartment);
+			const savedItem = await this.repository.save(newItem);
 			return ApiResponse.created(res, savedItem);
 		} catch (error) {
 			console.error("Error creating:", error);

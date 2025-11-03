@@ -1,9 +1,8 @@
 import { Entity, Column } from "typeorm";
-import { Base } from "./Base.ts";
 
 // Tipo de cuenta
 export type AccountTypeOrigin = "CR" | "DB";
-@Entity()
+@Entity({ name: "account_types" })
 export class AccountType {
 	@Column({ primary: true, unique: true })
 	id: number;

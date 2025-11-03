@@ -1,6 +1,6 @@
-import { AppDataSource } from "../config/data-source.ts";
-import { SeedBaseController } from "./base/SeedBaseController.ts";
-import { ChartOfAccount } from "../entities/ChartOfAccount.ts";
+import { AppDataSource } from "../../config/data-source.ts";
+import { SeedBaseController } from "./SeedBaseController.ts";
+import { ChartOfAccount } from "../../entities/base/ChartOfAccount.ts";
 import type { Request, Response } from "express";
 
 export class ChartOfAccountController extends SeedBaseController<ChartOfAccount> {
