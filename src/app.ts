@@ -10,6 +10,7 @@ import departmentRoutes from "./routes/DepartmentRoutes.ts";
 import typeOfAssetRoutes from "./routes/TypeOfAssetRoutes.ts";
 import fixedAssetRoutes from "./routes/FixedAssetsRoutes.ts";
 import depreciationRoutes from "./routes/DepreciationRoutes.ts";
+import accountingEntryRoutes from "./routes/AccountingEntryRoutes.ts";
 const app = express();
 const API_PREFIX = "/api/v1";
 app.use(cors());
@@ -19,6 +20,7 @@ app.use(`${API_PREFIX}/type-of-assets`, typeOfAssetRoutes);
 app.use(`${API_PREFIX}/employees`, employeeRoutes);
 app.use(`${API_PREFIX}/fixed-assets`, fixedAssetRoutes);
 app.use(`${API_PREFIX}/depreciations`, depreciationRoutes);
+app.use(`${API_PREFIX}/accounting-entries`, accountingEntryRoutes);
 // Seeded Entities
 app.use(`${API_PREFIX}/accounts`, accountRoutes);
 app.use(`${API_PREFIX}/currencies`, currencyRoutes);

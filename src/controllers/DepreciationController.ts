@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import {
 	DepreciationError,
 	DepreciationService,
+	ListCalculationsFilters,
 } from "../services/DepreciationService.ts";
 import { ApiResponse } from "../utils/ApiResponse.util.ts";
 
@@ -40,9 +41,48 @@ export class DepreciationController {
 		}
 	}
 
-	async list(_: Request, res: Response) {
+	async list(req: Request, res: Response) {
+		const { assetId, year, month } = req.query;
+		const filters: ListCalculationsFilters = {};
+
+		if (assetId !== undefined) {
+			const value = Array.isArray(assetId) ? assetId[0] : assetId;
+			const parsed = Number(value);
+			if (!Number.isInteger(parsed) || parsed <= 0) {
+				return ApiResponse.badRequest(
+					res,
+					"El parámetro assetId debe ser un número entero positivo"
+				);
+			}
+			filters.assetId = parsed;
+		}
+
+		if (year !== undefined) {
+			const value = Array.isArray(year) ? year[0] : year;
+			const parsed = Number(value);
+			if (!Number.isInteger(parsed) || parsed < 1900) {
+				return ApiResponse.badRequest(
+					res,
+					"El parámetro year debe ser un número entero válido"
+				);
+			}
+			filters.year = parsed;
+		}
+
+		if (month !== undefined) {
+			const value = Array.isArray(month) ? month[0] : month;
+			const parsed = Number(value);
+			if (!Number.isInteger(parsed) || parsed < 1 || parsed > 12) {
+				return ApiResponse.badRequest(
+					res,
+					"El parámetro month debe ser un número entre 1 y 12"
+				);
+			}
+			filters.month = parsed;
+		}
+
 		try {
-			const data = await this.depreciationService.listCalculations();
+			const data = await this.depreciationService.listCalculations(filters);
 			return ApiResponse.success(res, data);
 		} catch (error) {
 			return this.handleError(res, error);

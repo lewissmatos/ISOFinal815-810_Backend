@@ -56,6 +56,12 @@ export type ProcessSingleResponse =
 			reason: string;
 	  };
 
+export interface ListCalculationsFilters {
+	assetId?: number;
+	year?: number;
+	month?: number;
+}
+
 interface ApplyDepreciationParams {
 	asset: FixedAsset;
 	manager: EntityManager;
@@ -183,18 +189,36 @@ export class DepreciationService {
 		});
 	}
 
-	async listCalculations() {
-		return this.calculationRepository.find({
-			relations: [
-				"asset",
-				"asset.typeOfAsset",
-				"purchaseAccount",
-				"depreciationAccount",
-				"accountingEntries",
-				"accountingEntries.account",
-			],
-			order: { processDate: "DESC" },
-		});
+	async listCalculations(filters: ListCalculationsFilters = {}) {
+		const qb = this.calculationRepository
+			.createQueryBuilder("calculation")
+			.leftJoinAndSelect("calculation.asset", "asset")
+			.leftJoinAndSelect("asset.typeOfAsset", "typeOfAsset")
+			.leftJoinAndSelect("calculation.purchaseAccount", "purchaseAccount")
+			.leftJoinAndSelect(
+				"calculation.depreciationAccount",
+				"depreciationAccount"
+			)
+			.leftJoinAndSelect("calculation.accountingEntries", "accountingEntries")
+			.leftJoinAndSelect("accountingEntries.account", "account")
+			.orderBy("calculation.processDate", "DESC")
+			.addOrderBy("calculation.id", "DESC");
+
+		if (filters.assetId) {
+			qb.andWhere("asset.id = :assetId", { assetId: filters.assetId });
+		}
+
+		if (filters.year) {
+			qb.andWhere("calculation.processYear = :year", { year: filters.year });
+		}
+
+		if (filters.month) {
+			qb.andWhere("calculation.processMonth = :month", {
+				month: filters.month,
+			});
+		}
+
+		return qb.getMany();
 	}
 
 	async getCalculationById(id: number) {
