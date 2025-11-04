@@ -12,7 +12,12 @@ export class FixedAssetController extends BaseController<FixedAsset> {
 	async getAll(_: Request, res: Response): Promise<Response> {
 		try {
 			const data = await this.repository.find({
-				relations: ["department", "typeOfAsset"],
+				relations: [
+					"department",
+					"typeOfAsset",
+					"typeOfAsset.purchaseAccount",
+					"typeOfAsset.depreciationAccount",
+				],
 			});
 			return ApiResponse.success(res, data);
 		} catch (error) {

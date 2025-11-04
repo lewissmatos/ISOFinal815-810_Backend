@@ -5,8 +5,10 @@ import {
 	ManyToOne,
 	JoinColumn,
 } from "typeorm";
-import { TypeOfAsset } from "./TypeOfAsset"; // si relacionas con el tipo de inventario
-import { ChartOfAccount } from "./base/ChartOfAccount";
+import { TypeOfAsset } from "./TypeOfAsset.ts"; // si relacionas con el tipo de inventario
+import { Account } from "./base/Account.ts";
+import { DepreciationCalculation } from "./DepreciationCalculation.ts";
+import { decimalTransformer } from "../utils/transformers.ts";
 
 @Entity({ name: "accounting_entries" })
 export class AccountingEntry {
@@ -20,9 +22,17 @@ export class AccountingEntry {
 	@JoinColumn({ name: "inventoryTypeId" })
 	inventoryType?: TypeOfAsset;
 
-	@ManyToOne(() => ChartOfAccount)
+	@ManyToOne(() => Account)
 	@JoinColumn({ name: "accountId" })
-	account: ChartOfAccount;
+	account: Account;
+
+	@ManyToOne(
+		() => DepreciationCalculation,
+		(calculation) => calculation.accountingEntries,
+		{ nullable: true }
+	)
+	@JoinColumn({ name: "depreciationCalculationId" })
+	depreciationCalculation: DepreciationCalculation;
 
 	@Column({ type: "char", length: 2 })
 	movementType: "DB" | "CR";
@@ -30,9 +40,14 @@ export class AccountingEntry {
 	@Column({ type: "date" })
 	entryDate: Date;
 
-	@Column({ type: "decimal", precision: 18, scale: 2 })
+	@Column({
+		type: "decimal",
+		precision: 18,
+		scale: 2,
+		transformer: decimalTransformer,
+	})
 	amount: number;
 
 	@Column({ default: "PENDIENTE" })
-	status: "PENDIENTE" | "PROCESADO" | "ANULADO"; // Estado
+	status: "PENDIENTE" | "PROCESADO" | "ANULADO";
 }

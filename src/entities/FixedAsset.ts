@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, JoinColumn } from "typeorm";
 import { Base } from "./base/Base.ts";
 import { Department } from "./Department.ts";
 import { TypeOfAsset } from "./TypeOfAsset.ts";
+import { decimalTransformer } from "../utils/transformers.ts";
 
 @Entity({ name: "fixed_assets" })
 export class FixedAsset extends Base {
@@ -9,12 +10,15 @@ export class FixedAsset extends Base {
 	description: string;
 
 	@ManyToOne(() => Department, { nullable: false })
-	@JoinColumn({ name: "department_id" })
+	@JoinColumn({ name: "departmentId" })
 	department: Department;
 
 	@ManyToOne(() => TypeOfAsset, { nullable: false })
-	@JoinColumn({ name: "type_of_asset_id" })
+	@JoinColumn({ name: "typeOfAssetId" })
 	typeOfAsset: TypeOfAsset;
+
+	@Column({ type: "int", default: 1 })
+	usefulLifeMonths: number;
 
 	@Column({
 		type: "date",
@@ -22,9 +26,21 @@ export class FixedAsset extends Base {
 	})
 	purchaseDate: Date;
 
-	@Column({ default: 0.0 })
+	@Column({
+		type: "decimal",
+		precision: 18,
+		scale: 2,
+		default: 0,
+		transformer: decimalTransformer,
+	})
 	purchaseValue: number;
 
-	@Column({ default: 0.0 })
+	@Column({
+		type: "decimal",
+		precision: 18,
+		scale: 2,
+		default: 0,
+		transformer: decimalTransformer,
+	})
 	accumulatedDepreciation: number;
 }

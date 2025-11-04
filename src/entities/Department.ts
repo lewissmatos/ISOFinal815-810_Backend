@@ -10,7 +10,7 @@ export class Department extends Base {
 	@Column({ nullable: true })
 	details?: string;
 
-	@OneToOne(() => Employee, { nullable: true })
-	@JoinColumn({ name: "manager_id" })
+	@OneToOne(() => Employee, { nullable: true, onDelete: "SET NULL" })
+	@JoinColumn({ name: "managerId" })
 	manager?: Employee | null;
 }

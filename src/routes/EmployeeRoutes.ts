@@ -5,7 +5,7 @@ const router = Router();
 
 const employeeController = new EmployeeController();
 router.get("/", employeeController.getAll.bind(employeeController));
-router.get("/active", employeeController.getAll.bind(employeeController));
+router.get("/active", employeeController.getActive.bind(employeeController));
 router.get("/:id", employeeController.getById.bind(employeeController));
 router.post("/", employeeController.create.bind(employeeController));
 router.put("/:id", employeeController.update.bind(employeeController));

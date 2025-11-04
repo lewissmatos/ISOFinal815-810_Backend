@@ -9,6 +9,8 @@ import { Employee } from "../entities/Employee.ts";
 import { AccountType } from "../entities/base/AccountType.ts";
 import { Account } from "../entities/base/Account.ts";
 import { FixedAsset } from "../entities/FixedAsset.ts";
+import { DepreciationCalculation } from "../entities/DepreciationCalculation.ts";
+import { AccountingEntry } from "../entities/AccountingEntry.ts";
 
 dotenv.config();
 
@@ -36,6 +38,8 @@ export const AppDataSource = new DataSource({
 		TypeOfAsset,
 		Employee,
 		FixedAsset,
+		DepreciationCalculation,
+		AccountingEntry,
 		...[AccountType, Account, ChartOfAccount, Currency] /* Seed Entities */,
 	],
 	options: {

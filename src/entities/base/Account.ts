@@ -18,7 +18,7 @@ export class Account {
 	@Column({ type: "int" })
 	level: number;
 
-	@Column({ nullable: true, default: 0.0 })
+	@Column({ nullable: false, default: 0.0 })
 	balance: number;
 
 	@Column({ type: "int", nullable: true })

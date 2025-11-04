@@ -13,8 +13,11 @@ export class Employee extends Base {
 	@Column({ length: 100 })
 	position: string;
 
-	@ManyToOne(() => Department, { nullable: false })
-	@JoinColumn({ name: "department_id" })
+	@ManyToOne(() => Department, {
+		nullable: true,
+		onDelete: "SET NULL",
+	})
+	@JoinColumn({ name: "departmentId" })
 	department: Department;
 
 	@Column()
