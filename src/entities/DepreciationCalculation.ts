@@ -6,7 +6,7 @@ import {
 	JoinColumn,
 } from "typeorm";
 import { FixedAsset } from "./FixedAsset";
-import { ChartOfAccount } from "./base/ChartOfAccount";
+import { Account } from "./base/Account";
 
 @Entity({ name: "depreciation_calculations" })
 export class DepreciationCalculation {
@@ -20,7 +20,7 @@ export class DepreciationCalculation {
 	processMonth: number;
 
 	@ManyToOne(() => FixedAsset)
-	@JoinColumn({ name: "assetId" })
+	@JoinColumn({ name: "asset_id" })
 	asset: FixedAsset;
 
 	@Column({ type: "date" })
@@ -32,11 +32,11 @@ export class DepreciationCalculation {
 	@Column({ type: "decimal", precision: 18, scale: 2 })
 	accumulatedDepreciation: number;
 
-	@ManyToOne(() => ChartOfAccount)
-	@JoinColumn({ name: "purchaseAccountId" })
-	purchaseAccount: ChartOfAccount;
+	@ManyToOne(() => Account)
+	@JoinColumn({ name: "purchase_account_id" })
+	purchaseAccount: Account;
 
-	@ManyToOne(() => ChartOfAccount)
-	@JoinColumn({ name: "depreciationAccountId" })
-	depreciationAccount: ChartOfAccount;
+	@ManyToOne(() => Account)
+	@JoinColumn({ name: "depreciation_account_id" })
+	depreciationAccount: Account;
 }

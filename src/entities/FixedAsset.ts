@@ -20,10 +20,10 @@ export class FixedAsset extends Base {
 		type: "date",
 		default: () => "GETDATE()",
 	})
-	enrollmentDate: Date;
+	purchaseDate: Date;
 
 	@Column({ default: 0.0 })
-	buyingValue: number;
+	purchaseValue: number;
 
 	@Column({ default: 0.0 })
 	accumulatedDepreciation: number;

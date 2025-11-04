@@ -8,8 +8,8 @@ export class TypeOfAsset extends Base {
 	description: string;
 
 	@ManyToOne(() => Account, { nullable: false })
-	@JoinColumn({ name: "buying_account_id" })
-	buyingAccount: Account;
+	@JoinColumn({ name: "purchase_account_id" })
+	purchaseAccount: Account;
 
 	@ManyToOne(() => Account, { nullable: false })
 	@JoinColumn({ name: "depreciation_account_id" })

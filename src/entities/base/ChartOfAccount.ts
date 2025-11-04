@@ -1,6 +1,6 @@
 import { Entity, Column } from "typeorm";
-import { Base } from "./Base.ts";
 
+// Catálogo de Auxiliares
 @Entity({ name: "chart_of_accounts" })
 export class ChartOfAccount {
 	@Column({ primary: true, unique: true })

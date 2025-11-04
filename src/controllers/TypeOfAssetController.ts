@@ -12,7 +12,7 @@ export class TypeOfAssetController extends BaseController<TypeOfAsset> {
 	async getAll(req: Request, res: Response): Promise<Response> {
 		try {
 			const data = await this.repository.find({
-				relations: ["buyingAccount", "depreciationAccount"],
+				relations: ["purchaseAccount", "depreciationAccount"],
 			});
 			return ApiResponse.success(res, data);
 		} catch (error) {
