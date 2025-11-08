@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import type { Repository } from "typeorm";
-import type { Base } from "../../entities/base/Base.ts";
-import { ApiResponse } from "../../utils/ApiResponse.util.ts";
+import { ApiResponse } from "../utils/ApiResponse.util";
+import { Base } from "../entities/Base";
 
 export abstract class BaseController<T extends object & Base> {
 	protected repository: Repository<T>;

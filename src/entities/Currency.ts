@@ -3,10 +3,7 @@ import { Base } from "./Base.ts";
 
 //Moneda
 @Entity({ name: "currencies" })
-export class Currency {
-	@Column({ primary: true, unique: true })
-	id: number;
-
+export class Currency extends Base {
 	@Column({ unique: true, length: 5 })
 	ISOCode: string;
 

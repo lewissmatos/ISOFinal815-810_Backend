@@ -1,16 +1,11 @@
 import "reflect-metadata";
 import dotenv from "dotenv";
 import { DataSource } from "typeorm";
-import { Department } from "../entities/Department.ts";
-import { TypeOfAsset } from "../entities/TypeOfAsset.ts";
-import { ChartOfAccount } from "../entities/base/ChartOfAccount.ts";
-import { Currency } from "../entities/base/Currency.ts";
-import { Employee } from "../entities/Employee.ts";
-import { AccountType } from "../entities/base/AccountType.ts";
-import { Account } from "../entities/base/Account.ts";
-import { FixedAsset } from "../entities/FixedAsset.ts";
-import { DepreciationCalculation } from "../entities/DepreciationCalculation.ts";
+import { Currency } from "../entities/Currency.ts";
+import { AccountType } from "../entities/AccountType.ts";
+import { Account } from "../entities/Account.ts";
 import { AccountingEntry } from "../entities/AccountingEntry.ts";
+import { AuxiliarySystem } from "../entities/AuxiliarySystem.ts";
 
 dotenv.config();
 
@@ -33,15 +28,7 @@ export const AppDataSource = new DataSource({
 	database: process.env.DB_NAME || "",
 	synchronize: true,
 	logging: false,
-	entities: [
-		Department,
-		TypeOfAsset,
-		Employee,
-		FixedAsset,
-		DepreciationCalculation,
-		AccountingEntry,
-		...[AccountType, Account, ChartOfAccount, Currency] /* Seed Entities */,
-	],
+	entities: [AccountingEntry, AccountType, Account, AuxiliarySystem, Currency],
 	options: {
 		encrypt: parseBool(process.env.DB_ENCRYPT, false),
 		connectTimeout: process.env.DB_CONNECT_TIMEOUT

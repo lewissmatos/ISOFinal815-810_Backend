@@ -5,39 +5,31 @@ import {
 	ManyToOne,
 	JoinColumn,
 } from "typeorm";
-import { TypeOfAsset } from "./TypeOfAsset.ts"; // si relacionas con el tipo de inventario
-import { Account } from "./base/Account.ts";
-import { DepreciationCalculation } from "./DepreciationCalculation.ts";
 import { decimalTransformer } from "../utils/transformers.ts";
+import { AuxiliarySystem } from "./AuxiliarySystem.ts";
+import { Account } from "./Account.ts";
+import { Base } from "./Base.ts";
 
 @Entity({ name: "accounting_entries" })
-export class AccountingEntry {
-	@PrimaryGeneratedColumn()
-	id: number;
-
+export class AccountingEntry extends Base {
 	@Column({ length: 255 })
 	description: string;
 
-	@ManyToOne(() => TypeOfAsset, { nullable: true })
-	@JoinColumn({ name: "inventoryTypeId" })
-	inventoryType?: TypeOfAsset;
+	@ManyToOne(() => AuxiliarySystem)
+	@JoinColumn({ name: "auxiliaryId" })
+	auxiliary: AuxiliarySystem;
 
 	@ManyToOne(() => Account)
 	@JoinColumn({ name: "accountId" })
 	account: Account;
 
-	@ManyToOne(
-		() => DepreciationCalculation,
-		(calculation) => calculation.accountingEntries,
-		{ nullable: true }
-	)
-	@JoinColumn({ name: "depreciationCalculationId" })
-	depreciationCalculation: DepreciationCalculation;
-
 	@Column({ type: "char", length: 2 })
 	movementType: "DB" | "CR";
 
-	@Column({ type: "date" })
+	@Column({
+		type: "date",
+		default: () => "GETDATE()",
+	})
 	entryDate: Date;
 
 	@Column({
@@ -48,6 +40,6 @@ export class AccountingEntry {
 	})
 	amount: number;
 
-	@Column({ default: "PENDIENTE" })
-	status: "PENDIENTE" | "PROCESADO" | "ANULADO";
+	@Column({ default: "R" })
+	transactionStatus: string;
 }
