@@ -2,9 +2,7 @@ import type { Request, Response } from "express";
 import { AppDataSource } from "../config/data-source.ts";
 import { AccountingEntry } from "../entities/AccountingEntry.ts";
 import { ApiResponse } from "../utils/ApiResponse.util.ts";
-import { Base } from "../entities/Base.ts";
 import { BaseController } from "./BaseController.ts";
-import { Account } from "../entities/Account.ts";
 
 export class AccountingEntryController extends BaseController<AccountingEntry> {
 	constructor() {
@@ -13,15 +11,69 @@ export class AccountingEntryController extends BaseController<AccountingEntry> {
 
 	async getAll(req: Request, res: Response) {
 		try {
-			const items = await this.repository.find({
-				relations: ["account", "auxiliary"],
-			});
-			const response = ApiResponse.success<AccountingEntry[]>(
+			const { qb, alias } = this.createListQueryBuilder();
+			const searchTerm = this.getStringQueryParam(req.query.search);
+			if (searchTerm) {
+				this.applySearchFilter(qb, alias, searchTerm);
+			}
+
+			const description = this.getStringQueryParam(req.query.description);
+			if (description) {
+				qb.andWhere(`${alias}.description LIKE :description`, {
+					description: `%${description}%`,
+				});
+			}
+
+			const auxiliaryId =
+				this.getNumberQueryParam(req.query.auxiliaryId) ??
+				this.getNumberQueryParam(req.query.auxiliarySystemId);
+			if (auxiliaryId) {
+				qb.andWhere(`${alias}.auxiliaryId = :auxiliaryId`, { auxiliaryId });
+			}
+
+			const accountId = this.getNumberQueryParam(req.query.accountId);
+			if (accountId) {
+				qb.andWhere(`${alias}.accountId = :accountId`, { accountId });
+			}
+
+			const movementType = this.getStringQueryParam(
+				req.query.movementType
+			)?.toUpperCase();
+			if (movementType && ["DB", "CR"].includes(movementType)) {
+				qb.andWhere(`${alias}.movementType = :movementType`, { movementType });
+			}
+
+			const fromDate =
+				this.getDateQueryParam(req.query.fromDate) ??
+				this.getDateQueryParam(req.query.startDate);
+			if (fromDate) {
+				qb.andWhere(`${alias}.entryDate >= :fromDate`, {
+					fromDate: this.formatDateForQuery(fromDate),
+				});
+			}
+
+			const toDate =
+				this.getDateQueryParam(req.query.toDate) ??
+				this.getDateQueryParam(req.query.endDate);
+			if (toDate) {
+				qb.andWhere(`${alias}.entryDate <= :toDate`, {
+					toDate: this.formatDateForQuery(toDate),
+				});
+			}
+
+			const exactDate = this.getDateQueryParam(req.query.entryDate);
+			if (exactDate) {
+				qb.andWhere(`${alias}.entryDate = :entryDate`, {
+					entryDate: this.formatDateForQuery(exactDate),
+				});
+			}
+
+			const items = await qb.getMany();
+			return ApiResponse.success(
 				res,
 				items,
 				"Accounting entries retrieved successfully"
 			);
-			return res.status(200).json(response);
 		} catch (error) {
 			console.error("Error retrieving accounting entries:", error);
 			const response = ApiResponse.error(res, "Error interno del servidor");
@@ -29,9 +81,42 @@ export class AccountingEntryController extends BaseController<AccountingEntry> {
 		}
 	}
 
+	protected override getRelations(): string[] {
+		return ["account", "auxiliary"];
+	}
+
+	private formatDateForQuery(date: Date) {
+		return date.toISOString().slice(0, 10);
+	}
+
 	async create(req: Request, res: Response) {
 		try {
-			const item = this.repository.create(req.body);
+			const payload = { ...req.body };
+			const bodyAuxiliaryId = this.normalizeIdValue(
+				payload?.auxiliary?.id ?? payload?.auxiliaryId
+			);
+			const resolvedAuxiliaryId =
+				bodyAuxiliaryId ??
+				this.normalizeIdValue(req.authContext?.auxiliarySystemId);
+
+			if (!resolvedAuxiliaryId) {
+				return ApiResponse.badRequest(
+					res,
+					"Auxiliary system is required to create an accounting entry"
+				);
+			}
+
+			if (payload.auxiliary && typeof payload.auxiliary === "object") {
+				payload.auxiliary = {
+					...payload.auxiliary,
+					id: resolvedAuxiliaryId,
+				};
+			} else {
+				payload.auxiliary = { id: resolvedAuxiliaryId };
+			}
+			delete payload.auxiliaryId;
+
+			const item = this.repository.create(payload);
 			const savedItem = await this.repository.save(item);
 			return res.status(201).json(savedItem);
 		} catch (error) {
@@ -39,5 +124,20 @@ export class AccountingEntryController extends BaseController<AccountingEntry> {
 			const response = ApiResponse.error(res, "Error interno del servidor");
 			return res.status(500).json(response);
 		}
+	}
+
+	private normalizeIdValue(value: unknown): number | null {
+		if (typeof value === "number") {
+			return Number.isFinite(value) && value > 0 ? value : null;
+		}
+		if (typeof value === "string") {
+			const trimmed = value.trim();
+			if (!trimmed) {
+				return null;
+			}
+			const parsed = Number(trimmed);
+			return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+		}
+		return null;
 	}
 }

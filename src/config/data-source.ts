@@ -6,6 +6,7 @@ import { AccountType } from "../entities/AccountType.ts";
 import { Account } from "../entities/Account.ts";
 import { AccountingEntry } from "../entities/AccountingEntry.ts";
 import { AuxiliarySystem } from "../entities/AuxiliarySystem.ts";
+import { Auth } from "../entities/Auth.ts";
 
 dotenv.config();
 
@@ -28,7 +29,14 @@ export const AppDataSource = new DataSource({
 	database: process.env.DB_NAME || "",
 	synchronize: true,
 	logging: false,
-	entities: [AccountingEntry, AccountType, Account, AuxiliarySystem, Currency],
+	entities: [
+		AccountingEntry,
+		AccountType,
+		Account,
+		AuxiliarySystem,
+		Currency,
+		Auth,
+	],
 	options: {
 		encrypt: parseBool(process.env.DB_ENCRYPT, false),
 		connectTimeout: process.env.DB_CONNECT_TIMEOUT

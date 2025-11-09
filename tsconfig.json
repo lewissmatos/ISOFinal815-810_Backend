@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"module": "nodenext",
 		"target": "esnext",
-		"types": [],
+		"types": ["node", "jsonwebtoken", "bcryptjs"],
 		"sourceMap": true,
 		"declaration": true,
 		"declarationMap": true,
