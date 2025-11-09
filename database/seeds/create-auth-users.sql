@@ -1,5 +1,5 @@
 
-DECLARE @DefaultPasswordHash NVARCHAR(60) = N'd70f9f53c58ab5252453a518783bf965e7f9ee8a3f2e2f56d15cb006777192cb';
+DECLARE @DefaultPasswordHash NVARCHAR(60) = N'$2a$10$fXHvgjaA0neYgnlz1c4gne0V5o78LCXVEkkEF6ddYyxhutTP3rnFS';
 
 WITH SeedData AS (
 	SELECT 1 AS AuxiliaryId, N'Contabilidad' AS AuxiliaryName, N'contabilidad_user' AS Username UNION ALL
@@ -30,3 +30,5 @@ WHEN NOT MATCHED THEN
 GO
 
 PRINT 'Auth users seeded successfully.';
+
+Select * from auth
