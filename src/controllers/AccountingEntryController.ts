@@ -68,7 +68,9 @@ export class AccountingEntryController extends BaseController<AccountingEntry> {
 				});
 			}
 
-			const items = await qb.getMany();
+			const items = (await qb.getMany()).sort((a, b) =>
+				b.entryDate.toString().localeCompare(a.entryDate.toString())
+			);
 			return ApiResponse.success(
 				res,
 				items,
@@ -116,6 +118,28 @@ export class AccountingEntryController extends BaseController<AccountingEntry> {
 			}
 			delete payload.auxiliaryId;
 
+			const resolvedAccountId = this.normalizeIdValue(
+				payload?.account?.id ?? payload?.accountId
+			);
+			if (!resolvedAccountId) {
+				return ApiResponse.badRequest(
+					res,
+					"Account is required to create an accounting entry"
+				);
+			}
+
+			payload.account = { id: resolvedAccountId };
+			delete payload.accountId;
+
+			const normalizedAmount = this.normalizeDecimalValue(payload.amount);
+			if (normalizedAmount === null) {
+				return ApiResponse.badRequest(
+					res,
+					"A valid amount is required to create an accounting entry"
+				);
+			}
+			payload.amount = normalizedAmount;
+
 			const item = this.repository.create(payload);
 			const savedItem = await this.repository.save(item);
 			return res.status(201).json(savedItem);
@@ -137,6 +161,21 @@ export class AccountingEntryController extends BaseController<AccountingEntry> {
 			}
 			const parsed = Number(trimmed);
 			return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+		}
+		return null;
+	}
+
+	private normalizeDecimalValue(value: unknown): number | null {
+		if (typeof value === "number" && Number.isFinite(value)) {
+			return value;
+		}
+		if (typeof value === "string") {
+			const trimmed = value.trim();
+			if (!trimmed) {
+				return null;
+			}
+			const parsed = Number(trimmed);
+			return Number.isFinite(parsed) ? parsed : null;
 		}
 		return null;
 	}
