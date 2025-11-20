@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export class SoapExchangeService {
-	static host = process.env.CURRENCIES_API_URL || "wsapi.wslab.qzz.io";
+	static host = process.env.CURRENCIES_API_URL || "wapi.wslab.qzz.io";
 	static path = "/TasaCambio.asmx";
 
 	static async getRate(currencyCode: string): Promise<number> {
@@ -34,6 +34,11 @@ export class SoapExchangeService {
 				res.on("data", (chunk) => (data += chunk));
 				res.on("end", () => {
 					try {
+						if (res.statusCode && res.statusCode >= 400) {
+							return reject(
+								new Error(`SOAP request failed with status ${res.statusCode}`)
+							);
+						}
 						const faultMatch = data.match(
 							/<(?:[\w:]*faultstring|faultstring)>([\s\S]*?)<\/(?:[\w:]*faultstring|faultstring)>/i
 						);
@@ -53,16 +58,13 @@ export class SoapExchangeService {
 							}
 						}
 
-						const numMatch = data.match(/[-+]?\d+[\.,]?\d*/);
-						if (numMatch) {
-							const parsed = Number(numMatch[0].replace(/,/g, "."));
-							if (!Number.isNaN(parsed)) {
-								return resolve(parsed);
-							}
-						}
-
+						const snippet = data.replace(/\s+/g, " ").trim().slice(0, 200);
 						return reject(
-							new Error("Exchange rate not found in SOAP response")
+							new Error(
+								`Unable to read exchange rate for "${currencyCode}". Response snippet: ${
+									snippet || "<empty>"
+								}`
+							)
 						);
 					} catch (err) {
 						return reject(err);

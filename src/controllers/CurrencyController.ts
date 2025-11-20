@@ -10,37 +10,49 @@ export class CurrencyController extends BaseController<Currency> {
 	}
 
 	async syncRates(req: Request, res: Response) {
+		const queryRunner = AppDataSource.createQueryRunner();
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+		let failureCode: string | null = null;
+		let failureError: string | null = null;
+		const updates: Array<{ code: string; rate: number }> = [];
 		try {
-			const currencies = await this.repository.find();
-			const results: Array<{
-				code: string;
-				success: boolean;
-				rate?: number;
-				error?: string;
-			}> = [];
-			for (const c of currencies) {
+			const currencies = await queryRunner.manager.find(Currency);
+			for (const currency of currencies) {
 				try {
-					const rate = await SoapExchangeService.getRate(c.ISOCode);
-					c.exchangeRate = rate;
-					console.log("Currency:", c.ISOCode, "Rate:", rate);
-					await this.repository.save(c);
-					results.push({ code: c.ISOCode, success: true, rate });
-				} catch (err: any) {
-					results.push({
-						code: c.ISOCode,
-						success: false,
-						error: err?.message ?? String(err),
-					});
+					const rate = await SoapExchangeService.getRate(currency.ISOCode);
+					currency.exchangeRate = rate;
+					await queryRunner.manager.save(currency);
+					updates.push({ code: currency.ISOCode, rate });
+				} catch (err) {
+					const message = err instanceof Error ? err.message : String(err);
+					failureCode = currency.ISOCode;
+					failureError = message;
+					throw err;
 				}
 			}
-			return res
-				.status(200)
-				.json({ isOk: true, message: "Rates synced", data: results });
+			await queryRunner.commitTransaction();
+			return res.status(200).json({
+				isOk: true,
+				message: "Rates synced",
+				data: updates,
+			});
 		} catch (error) {
+			await queryRunner.rollbackTransaction();
 			console.error("Error syncing rates:", error);
-			return res
-				.status(500)
-				.json({ isOk: false, message: "Error syncing rates" });
+			const errorMessage = failureCode
+				? `No se pudo sincronizar la moneda ${failureCode}`
+				: "Error sincronizando tasas";
+			return res.status(502).json({
+				isOk: false,
+				message: errorMessage,
+				error: error instanceof Error ? error.message : String(error),
+				failedCurrency: failureCode
+					? { code: failureCode, error: failureError }
+					: null,
+			});
+		} finally {
+			await queryRunner.release();
 		}
 	}
 
@@ -49,12 +61,6 @@ export class CurrencyController extends BaseController<Currency> {
 			const currency = await this.repository.findOneBy({
 				id: Number(req.params.id),
 			});
-			let result: {
-				code: string;
-				success: boolean;
-				rate?: number;
-				error?: string;
-			} = { code: "", success: false };
 			if (!currency) {
 				return res
 					.status(404)
@@ -64,22 +70,31 @@ export class CurrencyController extends BaseController<Currency> {
 				const rate = await SoapExchangeService.getRate(currency.ISOCode);
 				currency.exchangeRate = rate;
 				await this.repository.save(currency);
-				result = { code: currency.ISOCode, success: true, rate };
-			} catch (err: any) {
-				result = {
-					code: currency.ISOCode,
-					success: false,
-					error: err?.message ?? String(err),
-				};
+				return res.status(200).json({
+					isOk: true,
+					message: "Rates synced",
+					data: { code: currency.ISOCode, rate },
+				});
+			} catch (err) {
+				const message = err instanceof Error ? err.message : String(err);
+				console.error(
+					`Error syncing rate for currency ${currency.ISOCode}:`,
+					err
+				);
+				return res.status(502).json({
+					isOk: false,
+					message: `No se pudo sincronizar la moneda ${currency.ISOCode}`,
+					error: message,
+					failedCurrency: { code: currency.ISOCode },
+				});
 			}
-			return res
-				.status(200)
-				.json({ isOk: true, message: "Rates synced", data: result });
 		} catch (error) {
 			console.error("Error syncing rates:", error);
-			return res
-				.status(500)
-				.json({ isOk: false, message: "Error syncing rates" });
+			return res.status(500).json({
+				isOk: false,
+				message: "Error syncing rates",
+				error: error instanceof Error ? error.message : String(error),
+			});
 		}
 	}
 }

@@ -40,7 +40,7 @@ export abstract class BaseController<T extends object & Base> {
 		try {
 			const item = await this.repository.findOneBy({ id: Number(id) } as any);
 			if (!item) {
-				return res.status(404).json({ message: "Department not found" });
+				return res.status(404).json({ message: "User not found" });
 			}
 			return ApiResponse.success(res, item);
 		} catch (error) {
