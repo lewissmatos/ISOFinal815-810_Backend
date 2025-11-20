@@ -3,7 +3,7 @@ import { BaseController } from "./BaseController";
 import { Currency } from "../entities/Currency";
 import { SoapExchangeService } from "../services/SoapExchangeService";
 import type { Request, Response } from "express";
-import { JsonExchangeService } from "../services/JSONExchangeService";
+import { JsonExchangeService } from "../services/JsonExchangeService";
 
 const useJsonRateProvider =
 	process.env.CURRENCIES_API_PROTOCOL?.toLowerCase() === "json";

@@ -10,8 +10,13 @@ interface JsonRateResponse {
 }
 
 export class JsonExchangeService {
-	static host = process.env.CURRENCIES_API_JSON_URL;
-	static basePath = "/api/TasaCambio";
+	static host =
+		process.env.CURRENCIES_API_JSON_HOST ||
+		process.env.CURRENCIES_API_URL ||
+		"wsapi.wslab.qzz.io";
+
+	static basePath =
+		process.env.CURRENCIES_API_JSON_BASE_PATH || "/api/TasaCambio";
 
 	static async getRate(currencyCode: string): Promise<number> {
 		const options = {
