@@ -3,6 +3,15 @@ import { BaseController } from "./BaseController";
 import { Currency } from "../entities/Currency";
 import { SoapExchangeService } from "../services/SoapExchangeService";
 import type { Request, Response } from "express";
+import { JsonExchangeService } from "../services/JSONExchangeService";
+
+const useJsonRateProvider =
+	process.env.CURRENCIES_API_PROTOCOL?.toLowerCase() === "json";
+
+// Select exchange rate provider based on environment configuration.
+const rateProvider = useJsonRateProvider
+	? JsonExchangeService
+	: SoapExchangeService;
 
 export class CurrencyController extends BaseController<Currency> {
 	constructor() {
@@ -20,7 +29,7 @@ export class CurrencyController extends BaseController<Currency> {
 			const currencies = await queryRunner.manager.find(Currency);
 			for (const currency of currencies) {
 				try {
-					const rate = await SoapExchangeService.getRate(currency.ISOCode);
+					const rate = await rateProvider.getRate(currency.ISOCode);
 					currency.exchangeRate = rate;
 					await queryRunner.manager.save(currency);
 					updates.push({ code: currency.ISOCode, rate });
@@ -67,7 +76,7 @@ export class CurrencyController extends BaseController<Currency> {
 					.json({ isOk: false, message: "Currency not found" });
 			}
 			try {
-				const rate = await SoapExchangeService.getRate(currency.ISOCode);
+				const rate = await rateProvider.getRate(currency.ISOCode);
 				currency.exchangeRate = rate;
 				await this.repository.save(currency);
 				return res.status(200).json({
@@ -85,7 +94,7 @@ export class CurrencyController extends BaseController<Currency> {
 					isOk: false,
 					message: `No se pudo sincronizar la moneda ${currency.ISOCode}`,
 					error: message,
-					failedCurrency: { code: currency.ISOCode },
+					failedCurrency: { code: currency.ISOCode, error: message },
 				});
 			}
 		} catch (error) {
