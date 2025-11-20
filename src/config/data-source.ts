@@ -38,7 +38,8 @@ export const AppDataSource = new DataSource({
 		Auth,
 	],
 	options: {
-		encrypt: parseBool(process.env.DB_ENCRYPT, false),
+		trustServerCertificate: true,
+		encrypt: parseBool(process.env.DB_ENCRYPT, true),
 		connectTimeout: process.env.DB_CONNECT_TIMEOUT
 			? Number(process.env.DB_CONNECT_TIMEOUT)
 			: 30000,
