@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { ApiResponse } from "../utils/ApiResponse.util.ts";
-import { AuthService } from "../services/AuthService.ts";
-import { TokenUtil } from "../utils/Token.util.ts";
+import { ApiResponse } from "../utils/ApiResponse.util";
+import { AuthService } from "../services/AuthService";
+import { TokenUtil } from "../utils/Token.util";
 
 const authService = new AuthService();
 

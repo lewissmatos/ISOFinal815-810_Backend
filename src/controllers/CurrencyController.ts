@@ -1,5 +1,5 @@
-import { AppDataSource } from "../config/data-source.ts";
-import { BaseController } from "./BaseController.ts";
+import { AppDataSource } from "../config/data-source";
+import { BaseController } from "./BaseController";
 import { Currency } from "../entities/Currency";
 import { SoapExchangeService } from "../services/SoapExchangeService";
 import type { Request, Response } from "express";
@@ -22,6 +22,7 @@ export class CurrencyController extends BaseController<Currency> {
 				try {
 					const rate = await SoapExchangeService.getRate(c.ISOCode);
 					c.exchangeRate = rate;
+					console.log("Currency:", c.ISOCode, "Rate:", rate);
 					await this.repository.save(c);
 					results.push({ code: c.ISOCode, success: true, rate });
 				} catch (err: any) {

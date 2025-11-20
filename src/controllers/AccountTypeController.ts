@@ -1,6 +1,6 @@
-import { AppDataSource } from "../config/data-source.ts";
-import { AccountType } from "../entities/AccountType.ts";
-import { BaseController } from "./BaseController.ts";
+import { AppDataSource } from "../config/data-source";
+import { AccountType } from "../entities/AccountType";
+import { BaseController } from "./BaseController";
 
 export class AccountTypeController extends BaseController<AccountType> {
 	constructor() {

@@ -1,12 +1,12 @@
 import "reflect-metadata";
 import dotenv from "dotenv";
 import { DataSource } from "typeorm";
-import { Currency } from "../entities/Currency.ts";
-import { AccountType } from "../entities/AccountType.ts";
-import { Account } from "../entities/Account.ts";
-import { AccountingEntry } from "../entities/AccountingEntry.ts";
-import { AuxiliarySystem } from "../entities/AuxiliarySystem.ts";
-import { Auth } from "../entities/Auth.ts";
+import { Currency } from "../entities/Currency";
+import { AccountType } from "../entities/AccountType";
+import { Account } from "../entities/Account";
+import { AccountingEntry } from "../entities/AccountingEntry";
+import { AuxiliarySystem } from "../entities/AuxiliarySystem";
+import { Auth } from "../entities/Auth";
 
 dotenv.config();
 

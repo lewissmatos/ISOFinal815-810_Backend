@@ -1,7 +1,9 @@
 import https from "https";
+import dotenv from "dotenv";
+dotenv.config();
 
 export class SoapExchangeService {
-	static host = "wsapi.wslab.qzz.io";
+	static host = process.env.CURRENCIES_API_URL || "wsapi.wslab.qzz.io";
 	static path = "/TasaCambio.asmx";
 
 	static async getRate(currencyCode: string): Promise<number> {

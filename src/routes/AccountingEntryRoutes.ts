@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AccountingEntryController } from "../controllers/AccountingEntryController.ts";
+import { AccountingEntryController } from "../controllers/AccountingEntryController";
 
 const router = Router();
 const controller = new AccountingEntryController();

@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
-import { AppDataSource } from "../config/data-source.ts";
-import { AccountingEntry } from "../entities/AccountingEntry.ts";
-import { ApiResponse } from "../utils/ApiResponse.util.ts";
-import { BaseController } from "./BaseController.ts";
+import { AppDataSource } from "../config/data-source";
+import { AccountingEntry } from "../entities/AccountingEntry";
+import { ApiResponse } from "../utils/ApiResponse.util";
+import { BaseController } from "./BaseController";
 
 export class AccountingEntryController extends BaseController<AccountingEntry> {
 	constructor() {

@@ -6,9 +6,9 @@ import {
 	JoinColumn,
 	ManyToOne,
 } from "typeorm";
-import { AuxiliarySystem } from "./AuxiliarySystem.ts";
-import { Base } from "./Base.ts";
-import { hashPasswordSync, isPasswordHashed } from "../utils/password.util.ts";
+import { AuxiliarySystem } from "./AuxiliarySystem";
+import { Base } from "./Base";
+import { hashPasswordSync, isPasswordHashed } from "../utils/password.util";
 
 @Entity({ name: "auth" })
 export class Auth extends Base {

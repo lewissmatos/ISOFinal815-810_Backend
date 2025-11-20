@@ -1,12 +1,12 @@
-import { AppDataSource } from "../config/data-source.ts";
-import { Auth } from "../entities/Auth.ts";
-import { AuxiliarySystem } from "../entities/AuxiliarySystem.ts";
-import { TokenHashes, TokenUtil } from "../utils/Token.util.ts";
+import { AppDataSource } from "../config/data-source";
+import { Auth } from "../entities/Auth";
+import { AuxiliarySystem } from "../entities/AuxiliarySystem";
+import { TokenHashes, TokenUtil } from "../utils/Token.util";
 import {
 	comparePassword,
 	hashPassword,
 	isPasswordHashed,
-} from "../utils/password.util.ts";
+} from "../utils/password.util";
 
 export class AuthServiceError extends Error {
 	statusCode: number;

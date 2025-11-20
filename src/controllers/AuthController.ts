@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { AuthService, AuthServiceError } from "../services/AuthService.ts";
-import { ApiResponse } from "../utils/ApiResponse.util.ts";
+import { AuthService, AuthServiceError } from "../services/AuthService";
+import { ApiResponse } from "../utils/ApiResponse.util";
 
 export class AuthController {
 	private authService = new AuthService();

@@ -5,10 +5,10 @@ import {
 	ManyToOne,
 	JoinColumn,
 } from "typeorm";
-import { decimalTransformer } from "../utils/transformers.ts";
-import { AuxiliarySystem } from "./AuxiliarySystem.ts";
-import { Account } from "./Account.ts";
-import { Base } from "./Base.ts";
+import { decimalTransformer } from "../utils/transformers";
+import { AuxiliarySystem } from "./AuxiliarySystem";
+import { Account } from "./Account";
+import { Base } from "./Base";
 
 @Entity({ name: "accounting_entries" })
 export class AccountingEntry extends Base {

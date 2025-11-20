@@ -1,6 +1,6 @@
 import "reflect-metadata";
-import { AppDataSource } from "./config/data-source.ts";
-import app from "./app.ts";
+import { AppDataSource } from "./config/data-source";
+import app from "./app";
 import dotenv from "dotenv";
 
 dotenv.config();

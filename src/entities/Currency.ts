@@ -1,6 +1,6 @@
 import { Entity, Column } from "typeorm";
-import { Base } from "./Base.ts";
-import { decimalTransformer } from "../utils/transformers.ts";
+import { Base } from "./Base";
+import { decimalTransformer } from "../utils/transformers";
 
 //Moneda
 @Entity({ name: "currencies" })
